@@ -1,14 +1,18 @@
 import { async } from '@firebase/util'
 import Head from 'next/head'
 import Image from 'next/image'
+import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 import { useForm, SubmitHandler } from 'react-hook-form'
+import useAuth from '../hooks/useAuth'
 type Inputs = {
   email: string
   password: string
 }
 const Login = () => {
   const [login, setLogin] = useState(false)
+  const { signIn, signUp } = useAuth()
+  const route = useRouter()
   const {
     register,
     handleSubmit,
@@ -17,9 +21,9 @@ const Login = () => {
   } = useForm<Inputs>()
   const onSubmit: SubmitHandler<Inputs> = async ({ email, password }) => {
     if (login) {
-      //   await signIn(email, password)
+      await signIn(email, password)
     } else {
-      //   await signUp(email, password)
+      await signUp(email, password)
     }
   }
   return (
@@ -45,7 +49,9 @@ const Login = () => {
         onSubmit={handleSubmit(onSubmit)}
         className="relative mt-24 space-y-8 rounded bg-black/75 py-10 px-6 md:mt-0 md:max-w-md md:px-14"
       >
-        <h1 className="text-4xl font-semibold">Sign In</h1>
+        <h1 className="text-4xl font-semibold">
+          {login ? ' Sign In' : 'Sign Up'}
+        </h1>
         <div className="space-y-4">
           <label className="inline-block w-full">
             <input
@@ -76,6 +82,7 @@ const Login = () => {
         </div>
         <button
           onClick={() => setLogin(true)}
+          type="submit"
           className="w-full rounded bg-[#e50914] py-2 font-semibold"
         >
           Sign In
